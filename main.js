@@ -119,6 +119,8 @@ function setState(id){
   let negativos = document.getElementById('negativos')
   negativos.innerText = rowCells[5];
   console.log(rowCells[1])
+  let estado_actual = document.querySelector('.estado_actual')
+  estado_actual.innerText=rowCells[1]
 }
 ///////////////////////////GRAFICA////////////////////////////////////////////////////
 var myDoughnutChart = new Chart(ctx, {

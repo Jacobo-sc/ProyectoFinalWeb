@@ -19,7 +19,6 @@
 }
 .tres{
     height: 300px;
-    background-color: blueviolet;
 }
 .cuatro{
     height: 300px;
@@ -59,4 +58,8 @@
 height: 360px;
 width: 360px;
 float: left;
+}
+
+.estado_actual{
+    color:rgb(247, 228, 201);
 }
