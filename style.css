@@ -44,7 +44,9 @@
 
 #mapid { height: 40vh;}
 #graphpid { height: 40vh; }
-
+.dropdown-menu{
+    height: 200px;
+}
 .chart-container {
     width: 80%;
     height: 480px;
