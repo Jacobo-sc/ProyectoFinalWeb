@@ -9,7 +9,6 @@
 
 //   function successFunction(data) {
 //     var allRows = data.split(/\r?\n|\r/);
-
 //     for (var singleRow = 0; singleRow < allRows.length; singleRow++) {
 //       if (singleRow === 0) {
 //         table += '<thead>';
@@ -78,9 +77,6 @@ var allRows;
 ////////////////Configuración de página/////////////////////////
 $(document).ready(function(){
   var menu = document.querySelector('.dropdown-menu');
-  statesData.features.forEach((data,index)=>{
-    
-  })
   var rowCells;
   $.ajax({
     headers: {
@@ -90,9 +86,25 @@ $(document).ready(function(){
       dataType: 'text',
     }).done(function(data){
        allRows = data.split(/\r?\n|\r/)
-       
+       let allRowsSort = allRows.sort(function (a, b) {
+        let row1 = a.split(',')
+        let row2 = b.split(',')
+        console.log(row1)
+        console.log(row2)
+        if (parseInt(row1[3]) < parseInt(row2[3])) {
+          return 1;
+        }
+        if (parseInt(row1[3]) > parseInt(row2[3])) {
+          return -1;
+        }
+        // a must be equal to b
+        return 0;
+      });
+      console.log(allRows)
+      console.log(allRowsSort)
+      
        allRows.forEach((n,index)=>{
-         if(index>0){
+         
           rowCells = n.split(',');
           console.log(rowCells[1])
           let menu_item = document.createElement('button')
@@ -100,7 +112,32 @@ $(document).ready(function(){
           menu_item.className='dropdown-item'
           menu_item.setAttribute("onclick","setState("+index+")");
           menu.appendChild(menu_item)
-         }
+
+
+          /////////////////////// Cuadro 3 ////////////////////////////
+      //     <li class="list-group-item"> 
+        //     <div class="card-Title"> Veracruz </div>
+        //     <div class="card-body">100 Confirmados, 200 Fallecidos, 20 Negativos</div>
+      //      </li>
+          let lista = document.querySelector('.list-group');
+          let div1 = document.createElement('div')
+          div1.innerText= rowCells[1]
+          div1.className = 'card-Title';
+          console.log(div1);
+
+          let div2 = document.createElement('div')
+          div2.innerHTML = '<p style="color:yellow">'+ rowCells[3]+'</p>' + ' <p>Confirmados</p>  ' + '<p style="color:red">'+ rowCells[4] +'</p>'+ ' <p>Fallecidos</p>';
+          div2.className = 'card-body';
+          console.log(div2)
+
+          let li = document.createElement('li');
+          li.className = 'list-group-item'
+          li.appendChild(div1)
+          li.appendChild(div2)
+          lista.appendChild(li)          
+        
+
+        
         
       }
       )
@@ -109,45 +146,149 @@ $(document).ready(function(){
 
 
 });
-
 function setState(id){
   var rowCells = allRows[id].split(',');
+  console.log(rowCells)
   let confirmados = document.getElementById('confirmados')
   confirmados.innerText = rowCells[3];
   let fallecidos = document.getElementById('fallecidos')
   fallecidos.innerText = rowCells[4];
-  let negativos = document.getElementById('negativos')
-  negativos.innerText = rowCells[5];
   console.log(rowCells[1])
   let estado_actual = document.querySelector('.estado_actual')
   estado_actual.innerText=rowCells[1]
 }
 ///////////////////////////GRAFICA////////////////////////////////////////////////////
-var myDoughnutChart = new Chart(ctx, {
-    type: 'doughnut',
-    data: data,
-    options: options
-});
-//get the doughnut chart canvas
-var ctx1 = $("#doughnut-chartcanvas-1");
-var ctx2 = $("#doughnut-chartcanvas-2");
+var ctx = document.getElementById("outputCanvas").getContext("2d");
 
-//options
-var options = {
-  responsive: true,
-  title: {
-    display: true,
-    position: "top",
-    text: "Doughnut Chart",
-    fontSize: 18,
-    fontColor: "#111"
-  },
-  legend: {
-    display: true,
-    position: "bottom",
-    labels: {
-      fontColor: "#333",
-      fontSize: 16
+axios
+  .get(
+    "https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/cyclist-data.json"
+  )
+  .then(function (response) {
+    console.log(response);
+    var colouring = [];
+    var data = [];
+    var dopingData = [];
+    var notDopingData = [];
+
+    /*var description = document.getElementById("description");
+  description.innerText = response.data.description;*/
+
+    for (var i = 0; i < response.data.length; i++) {
+      if (response.data[i]["Doping"] === "") {
+        notDopingData.push({
+          x: parseFloat(response.data[i]["Time"].replace(":", ".")),
+          y: response.data[i]["Place"],
+          id: i
+        });
+      } else {
+        dopingData.push({
+          x: parseFloat(response.data[i]["Time"].replace(":", ".")),
+          y: response.data[i]["Place"],
+          id: i
+        });
+      }
     }
-  }
-};
+    var myChart = new Chart(ctx, {
+      type: "scatter",
+      data: {
+        label: "Scatter Dataset",
+        datasets: [
+          {
+            data: notDopingData,
+            label: "No Doping",
+            backgroundColor: "rgba(255, 0, 0, 1)"
+          },
+          {
+            data: dopingData,
+            label: "Doping",
+            backgroundColor: "rgba(0, 0, 255, 1)"
+          }
+        ]
+      },
+      options: {
+        title: {
+          display: true,
+          text: "35 Fastest times up Alpe d'Huez"
+        },
+        legend: {
+          display: true
+        },
+
+        showLines: false,
+        scales: {
+          yAxes: [
+            {
+              display: true,
+              scaleLabel: {
+                display: true,
+                labelString: "Rank",
+                fontSize: 16
+              },
+              ticks: {
+                beginAtZero: true,
+                fontSize: 14
+              }
+            }
+          ],
+          xAxes: [
+            {
+              type: "linear",
+              position: "bottom",
+              display: true,
+              scaleLabel: {
+                display: true,
+                labelString: "Time (Minutes)",
+                fontSize: 16
+              },
+              gridLines: {
+                display: true
+              },
+              ticks: {
+                beginAtZero: false,
+                fontSize: 14
+              }
+            }
+          ]
+        },
+        tooltips: {
+          displayColors: false,
+          callbacks: {
+            title: function (tooltipItems, data) {
+              var index = tooltipItems[0].index;
+              var datasetIndex = tooltipItems[0].datasetIndex;
+              var dataset = data.datasets[datasetIndex];
+              var datasetItem = dataset.data[index];
+
+              var person = response.data[datasetItem.id];
+              return person.Name + " - " + person.Nationality;
+            },
+            label: function (tooltipItems, data) {
+              var output = "";
+
+              var index = tooltipItems.index;
+              var datasetIndex = tooltipItems.datasetIndex;
+              var dataset = data.datasets[datasetIndex];
+              var datasetItem = dataset.data[index];
+
+              var person = response.data[datasetItem.id];
+
+              output += "TIme: " + person.Time + "\n | \n";
+              output += "Place: " + person.Place + "\n | \n";
+              output += "Year: " + person.Year + "\n | \n";
+              if (person.Doping === "") {
+                output += "Doping: None";
+              } else {
+                output += "Doping: " + person.Doping;
+              }
+              return output;
+            }
+          }
+        }
+      }
+    });
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+

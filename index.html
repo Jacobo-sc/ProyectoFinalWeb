@@ -42,43 +42,30 @@
                 <!-- Cuadros 2, 3, 4 -->
                 A
                 <div class="dos d-flex justify-content-center row">
-                    <div class=" col-md-3 d-inline-block">
-                        <div class="card" style="background-color:rgba(255, 255, 0, 0.719); text-align:center">
+                    <div class=" col-md-5 d-inline-block">
+                        <div class="card" style="background-color:rgba(255, 255, 0, 0.719); text-align:center; font-size:100%;">
                             <div class="card-header"><p class="casos" >Confirmados</p></div>
                             <div class="card-body" id='confirmados' style="text-align:center">55689</div>
                         </div>
                     </div>
-                    <div class=" col-md-3 d-inline-block ">
-                        <div class="card" style="background-color:red; text-align:center">
+                    <div class=" col-md-5 d-inline-block ">
+                        <div class="card" style="background-color:red; text-align:center; font-size:100%;">
                             <div class="card-header"><p class="casos"  >Fallecidos</p></div>
                             <div class="card-body" id='fallecidos' style="text-align:center">9635</div>
                         </div>
                     </div>
-                    <div class=" col-md-3 d-inline-block">
+                    <!-- <div class=" col-md-3 d-inline-block">
                         <div class="card" style="background-color:rgb(72, 146, 38); text-align:center">
                             <div class="card-header"><p class="casos">Negativos</p></div>
                             <div class="card-body" id='negativos'  style="text-align:center">564896</div>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="tres mt-4 ml-4">
                     <div class="card" > 
                         <div class="card-header">Estados</div>
                         <div class="card-content overflow-auto" style="height:250px">
                             <ul class="list-group list-group-flush">
-                                <li class="list-group-item"> 
-                                    <div class="card-Title"> Veracruz </div>
-                                    <div class="card-body">100 Confirmados, 200 Fallecidos, 20 Negativos</div>
-                                </li>
-                                <li class="list-group-item"> 
-                                    <div class="card-Title"> Puebla </div>
-                                    <div class="card-body">150 Confirmados, 240 Fallecidos, 20 Negativos</div>
-                                </li>
-                                <li class="list-group-item"> 
-                                    <div class="card-Title"> Tlaxcala </div>
-                                    <div class="card-body">10 Confirmados, 260 Fallecidos, 50 Negativos</div>
-                                </li>
-                        
                             </ul>
                         </div>
                     </div>
@@ -87,10 +74,8 @@
                 <div class="cuatro mt-4 ml-4">
                     <div class="chart-container">
                         <div class="doughnut-chart-container">
-                            <canvas id="doughnut-chartcanvas-1"></canvas>
+                            <canvas id="doughnut-chartcanvas-1"width="auto" height="auto"></canvas>
                         </div>
-                    
-                
                         </div>
                 </div>
 
@@ -100,11 +85,8 @@
                 <!-- Cuadros 5 y 6 -->
                 <div class="cinco" id="mapid"></div>
                 <div class="seis mt-2" id="graphpid">
-                    <h3>35 Fastest times up Alpe d'Huez and doping</h3>
                     <div class="chart-container">
-                        <div class="scatter-chart-container">
-                            <canvas id="#scatter-chartcanvas-1"></canvas>
-                        </div>
+                        <canvas id="myChart" width="auto" height="auto"></canvas>
                     
                 
                     </div>
@@ -114,21 +96,11 @@
             <div class="col-md-3 columnaC">
                 <!-- Cuadros 7 y 8 -->
                 c
-                <!-- <div class="chart-container">
+                <div class="chart-container">
                     <div class="pie-chart-container">
-                        <canvas id="pie-chartcanvas-1"></canvas>
+                        <canvas id="pie-chartcanvas-1" width="auto" height="auto"></canvas>
                     </div>
-                
-            
-               </div> -->
-               <h3>35 Fastest times up Alpe d'Huez and doping</h3>
-                <div class="container">
-                <div class="row">
-                    <div class="col-sm-12">
-                    <canvas id="outputCanvas" width="500" height="300"></canvas>
-                    </div>
-                    <div id="description"></div>
-                </div>
+               </div>
                 </div>
             </div>
         </div>
@@ -148,126 +120,54 @@
     <script src="pie.js"></script>
     <script src="scatter.js"></script>
     <script src='main.js'></script>
+    
+    <canvas id="outputCanvas" width="250" height="200"></canvas>
     <script>
-        var ctx = document.getElementById("outputCanvas").getContext('2d');
-        
-         axios.get('https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/cyclist-data.json')
-         .then(function (response) {
-         console.log(response);
-         var colouring = [];
-         var data = [];
-         var dopingData = [];
-         var notDopingData = [];
-         
-         /*var description = document.getElementById("description");
-         description.innerText = response.data.description;*/
-         
-         for (var i = 0; i < response.data.length; i++) {
-             if (response.data[i]["Doping"] === "") {
-             notDopingData.push({x: parseFloat(response.data[i]['Time'].replace(':','.')), y: response.data[i]['Place'], id: i});
-             } else {
-             dopingData.push({x: parseFloat(response.data[i]['Time'].replace(':','.')), y: response.data[i]['Place'], id: i});
-             }
-         }
-         var myChart = new Chart(ctx, {
-             type: 'scatter',
-             data: {
-             label: 'Scatter Dataset',
-             datasets: [{
-                 data: notDopingData,
-                 label: 'No Doping',
-                 backgroundColor: 'rgba(255, 0, 0, 1)',
-                 },
-                 {
-                 data: dopingData,
-                 label: 'Doping',
-                 backgroundColor: 'rgba(0, 0, 255, 1)'
-                 }]
-             },
-             options: {
-             title: {
-                 display: true,
-                 text: "35 Fastest times up Alpe d'Huez"
-             },
-             legend: {
-                 display: true,
-             },
-             
-             showLines: false,
-             scales: {
-                 yAxes: [{
-                 display: true,
-                 scaleLabel: {
-                     display: true,
-                     labelString: 'Rank',
-                     fontSize: 16
-                 },
-                 ticks: {
-                     beginAtZero:true,
-                     fontSize: 14
-                 }
-                 }],
-                 xAxes: [{
-                 type: 'linear',
-                 position: 'bottom',
-                 display: true,
-                 scaleLabel: {
-                     display: true,
-                     labelString: 'Time (Minutes)',
-                     fontSize: 16
-                 },
-                 gridLines: {
-                     display: true
-                 },
-                 ticks: {
-                     beginAtZero:false,
-                     fontSize: 14,
-                 }
-                 }]
-             },
-             tooltips: {
-                 displayColors: false,
-                 callbacks: {
-                 title: function(tooltipItems, data) {
-                     var index = tooltipItems[0].index;
-                     var datasetIndex = tooltipItems[0].datasetIndex;
-                     var dataset = data.datasets[datasetIndex];
-                     var datasetItem = dataset.data[index];
-                     
-                     var person = response.data[datasetItem.id];
-                     return person.Name + " - " + person.Nationality;
-                 },
-                 label: function(tooltipItems, data) {
-                     var output = "";
-                     
-                     var index = tooltipItems.index;
-                     var datasetIndex = tooltipItems.datasetIndex;
-                     var dataset = data.datasets[datasetIndex];
-                     var datasetItem = dataset.data[index];
-                     
-                     var person = response.data[datasetItem.id];
-                     
-                     output += "TIme: " + person.Time + "\n | \n";
-                     output += "Place: " + person.Place + "\n | \n";
-                     output += "Year: " + person.Year + "\n | \n";
-                     if (person.Doping === "") {
-                     output += "Doping: None";
-                     } else {
-                     output += "Doping: " + person.Doping;
-                     }
-                     return output;
-                 }
-                 }
-             }
-             }
-         });
-
-         })
-         .catch(function (error) {
-         console.log(error);
-         });
-
-
-</script>
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+    type: 'scatter',
+    data: {
+        datasets: [{
+            label: 'Scatter Dataset',
+            data: [{
+                x: 0,
+                y: 1
+            }, {
+                x: 1,
+                y: 2
+            }, {
+                x: 2,
+                y: 3
+            },{
+                x: 3,
+                y: 4
+            },{
+                x: 5.4,
+                y: 6.9
+            },{
+                x: 5.6,
+                y: 7.2
+            },{
+                x: 5.8,
+                y: 7.5
+            },{
+                x: 6.1,
+                y: 8
+            }],
+            borderColor: '#af90ca',
+            backgroundColor: '#af90ca',
+        }]
+    },
+    options: {
+        scales: {
+            xAxes: [{
+                type: 'linear',
+                position: 'bottom'
+            }]
+        }
+    }
+});
+    </script>
+    
 </body>
 </html>
