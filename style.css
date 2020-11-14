@@ -21,19 +21,19 @@
 }
 .cuatro{
     height: 300px;
-    background-color: #a5534c;
+    
 }
 .cinco{
     height: 300px;
-    background-color:  	#c7a3a2;
+    
 }
 .seis{
     height: 300px;
-    background-color: #ce9e5c;
+    
 }
 .siete{
     height: 300px;
-    background-color: #516c7f;
+    
 }
 .ocho{
     height: 300px;
@@ -54,11 +54,25 @@
 .pie-chart-container,
 .doughnut-chart-container, 
 .scatter-chart-container{
-height: 360px;
+height: 1000px;
 width: 360px;
 float: left;
 }
 
 .estado_actual{
     color:rgb(247, 228, 201);
+    
+}
+
+.info {
+    padding: 6px 8px;
+    font: 14px/16px Arial, Helvetica, sans-serif;
+    background: white;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+}
+.info h4 {
+    margin: 0 0 5px;
+    color: #777;
 }
