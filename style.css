@@ -47,15 +47,15 @@
 }
 .chart-container {
     width: 80%;
-    height: 480px;
+    height: 40vh;
     margin: 0 auto;
 }
 
 .pie-chart-container,
 .doughnut-chart-container, 
 .scatter-chart-container{
-height: 1000px;
-width: 360px;
+height: auto;
+width:100%;
 float: left;
 }
 

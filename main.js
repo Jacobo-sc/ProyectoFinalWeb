@@ -36,6 +36,7 @@ $(document).ready(function(){
         // a must be equal to b
         return 0;
       });  
+      let estado = ''
       allRows.forEach((n,index)=>{
           rowCells = n.split(',');
           let menu_item = document.createElement('button')
@@ -43,17 +44,14 @@ $(document).ready(function(){
           menu_item.className='dropdown-item'
           menu_item.setAttribute("onclick","setState("+index+")");
           menu.appendChild(menu_item)
-          let estado =  statesData.features.find((element)=>
-            element.properties.name === rowCells[1]
-          )
+          
+          
           //////////////////////// Pie chart //////////////////////////
           data1.labels.push(rowCells[1])
           data1.datasets[0].data.push(parseInt(rowCells[3]))
           color_aleatorio = getRandomColor();
           data1.datasets[0].backgroundColor.push(color_aleatorio);
           data1.datasets[0].borderColor.push(color_aleatorio);
-          //estado.properties.density = rowCells[3]
-          
           /////////////////////// Cuadro 3 ////////////////////////////
           let lista = document.querySelector('.list-group');
           let div1 = document.createElement('div')
@@ -70,9 +68,15 @@ $(document).ready(function(){
           li.appendChild(div2)
           lista.appendChild(li)          
           
-          //iniciarmapa()
-        
-        
+          statesData.features.find((element)=>{
+            if(element.properties.name === rowCells[1]){
+              element.properties.density = parseInt(rowCells[3])
+              element.properties.deaths = parseInt(rowCells[4])
+            }
+          }
+            
+          )
+         
       })
       console.log(data1)
       var chart1 = new Chart(ctx1, {
@@ -106,11 +110,37 @@ $(document).ready(function(){
         });  
         allUSRows.forEach((n,index)=>{
           rowUSsCells = n.split(',');
+          let  m = {x:index, y: parseInt(rowUSsCells[1])}
+          //console.log(m)
+          data3.datasets[0].data.push(m)
           
-          //////////////////////// Scatter chart //////////////////////////
          
 
         })
+        //console.log(data3)
+        //////////////////////// Scatter chart //////////////////////////
+        var myChart = new Chart(ctx3, {
+          type : 'scatter',
+          data : data3,
+          options: {
+              scales: {
+                  xAxes: [{
+                      type: 'linear',
+                      position: 'bottom',
+                      scaleLabel: {
+                        display: true,
+                        labelString: 'Días transcurridos desde el incio del covid-apocalipsis'
+                      }
+                  }],
+                  yAxes: [{
+                    scaleLabel: {
+                      display: true,
+                      labelString: 'Número de casos acumulados'
+                    }
+                }]
+              }
+          }
+        });
   })
 })
 function setState(id){
@@ -142,9 +172,6 @@ var mymap = L.map('mapid').setView([37.8, -96], 3);
       tileSize: 512,
       zoomOffset: -1
   }).addTo(mymap);
-  
-/////////////////////////////////MAPA////////////////////////////////////////////////
-//function iniciarmapa(){
 
   
   L.geoJson(statesData).addTo(mymap);
@@ -167,139 +194,61 @@ var mymap = L.map('mapid').setView([37.8, -96], 3);
           d > 100000  ? '#ffd900' :
                       '#00ff00';
   }
-//}
-///////////////////////////GRAFICA////////////////////////////////////////////////////
-var ctx = document.getElementById("outputCanvas").getContext("2d");
+  function highlightFeature(e) {
+    var layer = e.target;
 
-axios
-  .get(
-    "https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/cyclist-data.json"
-  )
-  .then(function (response) {
-    console.log(response);
-    var colouring = [];
-    var data = [];
-    var dopingData = [];
-    var notDopingData = [];
-
-    /*var description = document.getElementById("description");
-  description.innerText = response.data.description;*/
-
-    for (var i = 0; i < response.data.length; i++) {
-      if (response.data[i]["Doping"] === "") {
-        notDopingData.push({
-          x: parseFloat(response.data[i]["Time"].replace(":", ".")),
-          y: response.data[i]["Place"],
-          id: i
-        });
-      } else {
-        dopingData.push({
-          x: parseFloat(response.data[i]["Time"].replace(":", ".")),
-          y: response.data[i]["Place"],
-          id: i
-        });
-      }
-    }
-    var myChart = new Chart(ctx, {
-      type: "scatter",
-      data: {
-        label: "Scatter Dataset",
-        datasets: [
-          {
-            data: notDopingData,
-            label: "No Doping",
-            backgroundColor: "rgba(255, 0, 0, 1)"
-          },
-          {
-            data: dopingData,
-            label: "Doping",
-            backgroundColor: "rgba(0, 0, 255, 1)"
-          }
-        ]
-      },
-      options: {
-        title: {
-          display: true,
-          text: "35 Fastest times up Alpe d'Huez"
-        },
-        legend: {
-          display: true
-        },
-
-        showLines: false,
-        scales: {
-          yAxes: [
-            {
-              display: true,
-              scaleLabel: {
-                display: true,
-                labelString: "Rank",
-                fontSize: 16
-              },
-              ticks: {
-                beginAtZero: true,
-                fontSize: 14
-              }
-            }
-          ],
-          xAxes: [
-            {
-              type: "linear",
-              position: "bottom",
-              display: true,
-              scaleLabel: {
-                display: true,
-                labelString: "Time (Minutes)",
-                fontSize: 16
-              },
-              gridLines: {
-                display: true
-              },
-              ticks: {
-                beginAtZero: false,
-                fontSize: 14
-              }
-            }
-          ]
-        },
-        tooltips: {
-          displayColors: false,
-          callbacks: {
-            title: function (tooltipItems, data) {
-              var index = tooltipItems[0].index;
-              var datasetIndex = tooltipItems[0].datasetIndex;
-              var dataset = data.datasets[datasetIndex];
-              var datasetItem = dataset.data[index];
-
-              var person = response.data[datasetItem.id];
-              return person.Name + " - " + person.Nationality;
-            },
-            label: function (tooltipItems, data) {
-              var output = "";
-
-              var index = tooltipItems.index;
-              var datasetIndex = tooltipItems.datasetIndex;
-              var dataset = data.datasets[datasetIndex];
-              var datasetItem = dataset.data[index];
-
-              var person = response.data[datasetItem.id];
-
-              output += "TIme: " + person.Time + "\n | \n";
-              output += "Place: " + person.Place + "\n | \n";
-              output += "Year: " + person.Year + "\n | \n";
-              if (person.Doping === "") {
-                output += "Doping: None";
-              } else {
-                output += "Doping: " + person.Doping;
-              }
-              return output;
-            }
-          }
-        }
-      }
+    layer.setStyle({
+        weight: 5,
+        color: '#666',
+        dashArray: '',
+        fillOpacity: 0.7
     });
-  })
-  .catch(function (error) {
-    console.log(error);
-  });
 
+    if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+        layer.bringToFront();
+    }
+    info.update(layer.feature.properties);
+}
+
+function resetHighlight(e) {
+  geojson.resetStyle(e.target);
+  info.update();
+}
+
+var geojson;
+// ... our listeners
+geojson = L.geoJson(statesData);
+
+function zoomToFeature(e) {
+  map.fitBounds(e.target.getBounds());
+}
+
+function onEachFeature(feature, layer) {
+  layer.on({
+      mouseover: highlightFeature,
+      mouseout: resetHighlight,
+      click: zoomToFeature
+  });
+}
+
+geojson = L.geoJson(statesData, {
+  style: style,
+  onEachFeature: onEachFeature
+}).addTo(mymap);
+
+var info = L.control();
+
+info.onAdd = function (map) {
+    this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+    this.update();
+    return this._div;
+};
+
+// method that we will use to update the control based on feature properties passed
+info.update = function (props) {
+    this._div.innerHTML = '<h4>Población de EU con COVID-19</h4>' +  (props ?
+        '<b>' + props.name + '</b><br />' + props.density + ' personas infectadas</sup><br />' + props.deaths + ' personas fallecidas</sup>'
+        : 'Hover over a state');
+};
+
+info.addTo(mymap);
